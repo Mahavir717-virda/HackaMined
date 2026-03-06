@@ -19,6 +19,7 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
     f1_score,
+    accuracy_score,
 )
 from sklearn.utils.class_weight import compute_sample_weight
 import joblib
@@ -154,6 +155,10 @@ class RiskDetectionModel:
 
         self.feature_cols = X.columns.tolist()
 
+        # Ensure labels are a pandas Series for consistent API
+        if not isinstance(y, pd.Series):
+            y = pd.Series(y)
+
         # Handle class imbalance
         unique_classes = y.unique()
         class_counts = y.value_counts()
@@ -225,9 +230,11 @@ class RiskDetectionModel:
         precision = precision_score(y_test, y_pred, zero_division=0)
         recall = recall_score(y_test, y_pred, zero_division=0)
         f1 = f1_score(y_test, y_pred, zero_division=0)
+        accuracy = accuracy_score(y_test, y_pred)
 
         self.training_stats = {
             'auc': auc,
+            'accuracy': accuracy,
             'precision': precision,
             'recall': recall,
             'f1_score': f1,
@@ -239,6 +246,7 @@ class RiskDetectionModel:
         }
 
         logger.info(f"Training complete. AUC: {auc:.4f}")
+        logger.info(f"Training complete. Accuracy: {accuracy:.4f}")
         logger.info(
             "Validation metrics: precision=%.4f recall=%.4f f1=%.4f",
             precision,

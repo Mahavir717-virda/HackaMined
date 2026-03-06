@@ -1,0 +1,17 @@
+# Ignore pytest cache directories created during tests
+pytest-cache-files-*
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Node modules
+frontend/node_modules/
+
+# Environment files and logs
+.env
+*.log
+
+# Git
+.git
+.gitignore

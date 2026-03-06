@@ -37,6 +37,7 @@ from backend.schemas.models import (
     SummaryStatistics,
     HealthResponse,
 )
+from backend.training_queue import TrainingQueue, TrainingStatus
 
 # Configure logging
 logging.basicConfig(
@@ -69,6 +70,7 @@ class AppState:
         self.engineer = FeatureEngineer()
         self.explainer = RiskExplainer()
         self.predictions_cache = {}
+        self.training_queue = TrainingQueue()
         self.model_version = "1.0.0"
         self.model_path = os.getenv("MODEL_PATH", "./models/risk_model.joblib")
 
@@ -584,6 +586,104 @@ async def predict_single(container: dict):
         raise
     except Exception as e:
         logger.error(f"Single prediction error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/retrain")
+async def retrain_model(file: UploadFile = File(...)):
+    """
+    Auto-retrain model with uploaded dataset.
+    Returns training job ID for progress tracking.
+    """
+    try:
+        import uuid
+        job_id = str(uuid.uuid4())[:8]
+        
+        # Read and validate file
+        contents = await file.read()
+        df = _read_uploaded_csv(contents)
+        df = _normalize_upload_columns(df)
+        
+        rows_received = len(df)
+        logger.info(f"Retraining job {job_id}: {rows_received} rows")
+        
+        # Validate schema
+        valid, schema_errors = app_state.cleaner.validate_schema(df)
+        schema_errors = _filter_legacy_optional_schema_errors(schema_errors)
+        valid = len(schema_errors) == 0
+        
+        if not valid:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Schema validation failed: {', '.join(schema_errors)}"
+            )
+        
+        # Queue training job
+        app_state.training_queue.queue_training(job_id, df)
+        
+        return {
+            'status': 'queued',
+            'job_id': job_id,
+            'message': 'Model retraining started in background',
+            'rows_received': rows_received
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Retrain queue error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/training-status/{job_id}")
+async def get_training_status(job_id: str):
+    """
+    Get status of a training job.
+    """
+    try:
+        status = app_state.training_queue.get_status(job_id)
+        
+        if not status:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Training job {job_id} not found"
+            )
+        
+        return {
+            'job_id': job_id,
+            'status': status['status'],
+            'progress': status['progress'],
+            'message': status['message'],
+            'rows_loaded': status['rows_loaded'],
+            'rows_valid': status['rows_valid'],
+            'started_at': status['started_at'],
+            'completed_at': status['completed_at'],
+            'metrics': status['metrics'],
+            'error': status['error']
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Training status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/reload-model")
+async def reload_model():
+    """
+    Reload model from disk (after retraining completes).
+    """
+    try:
+        load_model()
+        return {
+            'status': 'success',
+            'message': 'Model reloaded from disk',
+            'model_loaded': app_state.model is not None,
+            'model_path': app_state.model_path
+        }
+    except Exception as e:
+        logger.error(f"Reload model error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

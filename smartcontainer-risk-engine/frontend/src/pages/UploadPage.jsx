@@ -91,7 +91,7 @@ const buildPreview = (rows) => {
 };
 
 export default function UploadPage() {
-  const { predictFromFile, resetToSample, isPredicting, lastError } = useData();
+  const { predictFromFile, retrainModel, resetToSample, isPredicting, lastError, isTraining, trainingStatus } = useData();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
@@ -102,6 +102,7 @@ export default function UploadPage() {
   const [pendingRows, setPendingRows] = useState(null);
   const [pendingName, setPendingName] = useState("");
   const [pendingFile, setPendingFile] = useState(null);
+  const [mode, setMode] = useState("predict"); // predict | retrain
 
   const processFile = useCallback((file) => {
     if (!file) return;
@@ -169,10 +170,16 @@ export default function UploadPage() {
     setStatus("uploading");
     setErrorMsg("");
     try {
-      await predictFromFile(pendingFile, pendingRows);
-      navigate("/dashboard");
+      if (mode === "predict") {
+        await predictFromFile(pendingFile, pendingRows);
+        navigate("/dashboard");
+      } else if (mode === "retrain") {
+        await retrainModel(pendingFile);
+        setStatus("completed");
+        setErrorMsg("Model retrained successfully!");
+      }
     } catch (error) {
-      setErrorMsg(error.message || "Prediction failed.");
+      setErrorMsg(error.message || (mode === "predict" ? "Prediction failed." : "Retraining failed."));
       setStatus("error");
     }
   };
@@ -208,6 +215,56 @@ export default function UploadPage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-6 py-10 w-full space-y-6">
+        {/* Mode Toggle */}
+        <div className="flex gap-2 rounded-lg bg-slate-900 p-1 border border-slate-800">
+          <button
+            onClick={() => { setMode("predict"); setStatus("idle"); setErrorMsg(""); }}
+            className={`flex-1 px-4 py-2 rounded-md font-semibold text-sm transition-all ${
+              mode === "predict"
+                ? "bg-blue-600 text-white"
+                : "text-slate-400 hover:text-slate-300"
+            }`}
+          >
+            📊 Run Prediction
+          </button>
+          <button
+            onClick={() => { setMode("retrain"); setStatus("idle"); setErrorMsg(""); }}
+            className={`flex-1 px-4 py-2 rounded-md font-semibold text-sm transition-all ${
+              mode === "retrain"
+                ? "bg-purple-600 text-white"
+                : "text-slate-400 hover:text-slate-300"
+            }`}
+          >
+            🔄 Retrain Model
+          </button>
+        </div>
+
+        {/* Training Status Progress */}
+        {isTraining && trainingStatus && (
+          <div className="rounded-xl bg-purple-950/50 border border-purple-800 p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-purple-300 font-semibold text-sm">Model Training in Progress</p>
+              <span className="text-purple-400 text-xs font-mono">{trainingStatus.progress || 0}%</span>
+            </div>
+            <div className="w-full bg-purple-900/30 rounded-full h-2 border border-purple-700/50 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-purple-500 to-purple-400 transition-all duration-300"
+                style={{ width: `${trainingStatus.progress || 0}%` }}
+              />
+            </div>
+            <p className="text-purple-400/80 text-xs mt-2">{trainingStatus.message}</p>
+            {trainingStatus.rows_valid && (
+              <p className="text-purple-400/60 text-xs mt-1">Valid rows: {trainingStatus.rows_valid} / {trainingStatus.rows_loaded}</p>
+            )}
+          </div>
+        )}
+
+        {status === "completed" && mode === "retrain" && (
+          <div className="rounded-xl bg-green-950/50 border border-green-800 p-4">
+            <p className="text-green-300 font-semibold text-sm">✓ Model Retrained Successfully!</p>
+            <p className="text-green-400/80 text-xs mt-1">The model has been updated with your new training data.</p>
+          </div>
+        )}
         <div
           onDragOver={(event) => {
             event.preventDefault();
@@ -336,10 +393,16 @@ export default function UploadPage() {
           {status === "ready" && pendingRows && (
             <button
               onClick={handleConfirm}
-              disabled={isPredicting}
+              disabled={isPredicting || isTraining}
               className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm transition-all shadow-lg shadow-blue-900/40"
             >
-              Run Model Prediction ({pendingRows.length} rows)
+              {isPredicting || isTraining
+                ? mode === "retrain"
+                  ? "Retraining Model..."
+                  : "Running Prediction..."
+                : mode === "retrain"
+                ? `Retrain with ${pendingRows.length} rows`
+                : `Run Model Prediction (${pendingRows.length} rows)`}
             </button>
           )}
           <button

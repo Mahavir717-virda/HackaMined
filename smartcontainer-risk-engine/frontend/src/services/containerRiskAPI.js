@@ -116,6 +116,25 @@ const ContainerRiskAPI = {
     return apiClient.post('/predict-single', containerData);
   },
 
+  // Retrain model with new dataset
+  retrain: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiClient.post('/retrain', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Get training status
+  getTrainingStatus: (jobId) => {
+    return apiClient.get(`/training-status/${jobId}`);
+  },
+
+  // Reload model after training
+  reloadModel: () => {
+    return apiClient.get('/reload-model');
+  },
+
   // Download predictions as CSV
   downloadPredictions: async (predictions, filename = 'predictions.csv') => {
     if (!predictions || predictions.length === 0) {

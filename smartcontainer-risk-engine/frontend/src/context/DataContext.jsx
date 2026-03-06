@@ -175,8 +175,8 @@ export function DataProvider({ children }) {
     summary: null,
   });
   const [isPredicting, setIsPredicting] = useState(false);
-  const [lastError, setLastError] = useState("");
-
+  const [lastError, setLastError] = useState("");  const [trainingStatus, setTrainingStatus] = useState(null);
+  const [isTraining, setIsTraining] = useState(false);
   const loadData = (rows, filename) => {
     setShipments(rows);
     setUploadMeta({
@@ -283,6 +283,85 @@ export function DataProvider({ children }) {
     }
   };
 
+  const retrainModel = async (file) => {
+    if (!file) {
+      throw new Error("Please select a CSV file first.");
+    }
+
+    setIsTraining(true);
+    setLastError("");
+    setTrainingStatus({ status: "queued", progress: 0, message: "Queueing training job..." });
+
+    try {
+      // Start retraining
+      const retrainResponse = await ContainerRiskAPI.retrain(file);
+      const retrainData = retrainResponse?.data;
+      const jobId = retrainData?.job_id;
+
+      if (!jobId) {
+        throw new Error("Retraining start failed - no job ID returned");
+      }
+
+      setTrainingStatus({ status: "queued", progress: 5, message: "Training job started", jobId });
+
+      // Poll training status
+      return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 300; // 5 minutes max polling
+        
+        const pollStatus = async () => {
+          try {
+            attempts++;
+            if (attempts > maxAttempts) {
+              throw new Error("Training timeout - exceeded max polling attempts");
+            }
+
+            const statusResponse = await ContainerRiskAPI.getTrainingStatus(jobId);
+            const statusData = statusResponse?.data;
+
+            setTrainingStatus({
+              status: statusData?.status,
+              progress: statusData?.progress || 0,
+              message: statusData?.message,
+              jobId: statusData?.job_id,
+              metrics: statusData?.metrics,
+              error: statusData?.error
+            });
+
+            if (statusData?.status === "completed") {
+              // Training completed - reload model
+              await ContainerRiskAPI.reloadModel();
+              setIsTraining(false);
+              resolve({ jobId, status: "completed", metrics: statusData?.metrics });
+              return;
+            }
+
+            if (statusData?.status === "failed") {
+              throw new Error(statusData?.error || "Training failed");
+            }
+
+            // Continue polling
+            setTimeout(pollStatus, 500); // Poll every 500ms
+          } catch (error) {
+            setIsTraining(false);
+            const message = formatApiError(error);
+            setLastError(message);
+            setTrainingStatus({ status: "failed", progress: 0, message, error: message });
+            reject(error);
+          }
+        };
+
+        pollStatus();
+      });
+    } catch (error) {
+      setIsTraining(false);
+      const message = formatApiError(error);
+      setLastError(message);
+      setTrainingStatus({ status: "failed", progress: 0, message, error: message });
+      throw new Error(message);
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -290,9 +369,12 @@ export function DataProvider({ children }) {
         uploadMeta,
         isPredicting,
         lastError,
+        trainingStatus,
+        isTraining,
         loadData,
         resetToSample,
         predictFromFile,
+        retrainModel,
       }}
     >
       {children}

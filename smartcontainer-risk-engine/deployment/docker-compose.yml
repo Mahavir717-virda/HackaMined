@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
+      context: ..
+      dockerfile: deployment/Dockerfile.backend
     container_name: smartcontainer-backend
     ports:
       - "8000:8000"
@@ -26,11 +24,11 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ..
+      dockerfile: deployment/Dockerfile.frontend
     container_name: smartcontainer-frontend
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - REACT_APP_API_URL=http://backend:8000
     depends_on:
