@@ -1,0 +1,162 @@
+2026-03-06 10:48:57,425 - __main__ - INFO - ============================================================
+2026-03-06 10:48:57,426 - __main__ - INFO - SMARTCONTAINER RISK ENGINE - TRAINING PIPELINE
+2026-03-06 10:48:57,426 - __main__ - INFO - ============================================================
+2026-03-06 10:48:57,426 - __main__ - INFO - 
+[Step 1] Loading data...
+2026-03-06 10:48:57,571 - __main__ - INFO - Loaded 54000 records
+2026-03-06 10:48:57,571 - __main__ - INFO - 
+[Step 2] Data cleaning...
+2026-03-06 10:48:57,572 - ml.preprocessing.data_cleaner - INFO - Starting data cleaning pipeline...
+2026-03-06 10:48:57,593 - ml.preprocessing.data_cleaner - INFO - Removed 0 duplicate containers
+2026-03-06 10:48:57,605 - ml.preprocessing.data_cleaner - INFO - Dropped 0 rows with missing critical fields
+2026-03-06 10:48:57,684 - ml.preprocessing.data_cleaner - INFO - Removed 15982 rows with invalid value ranges
+2026-03-06 10:48:57,686 - ml.preprocessing.data_cleaner - INFO - Data cleaning complete. Final shape: (38018, 17)
+2026-03-06 10:48:57,687 - ml.preprocessing.data_cleaner - INFO - Cleaning statistics: {'duplicates_removed': 0, 'rows_with_missing_critical': 0, 'invalid_value_ranges': 15982}
+2026-03-06 10:48:57,689 - __main__ - INFO - After cleaning: 38018 records
+2026-03-06 10:48:57,689 - __main__ - INFO - Cleaning stats: {'duplicates_removed': 0, 'rows_with_missing_critical': 0, 'invalid_value_ranges': 15982}
+2026-03-06 10:48:57,689 - __main__ - INFO - 
+[Step 3] Feature engineering...
+2026-03-06 10:48:57,689 - ml.features.feature_engineer - INFO - Starting feature engineering pipeline...
+2026-03-06 10:48:58,504 - ml.features.feature_engineer - INFO - Feature engineering complete. Features created: 33
+2026-03-06 10:48:58,508 - __main__ - INFO - Engineered 33 features
+2026-03-06 10:48:58,520 - __main__ - INFO - Feature matrix shape: (38018, 33)
+2026-03-06 10:48:58,522 - __main__ - INFO - Target distribution:
+is_risky
+0    31673
+1     6345
+Name: count, dtype: int64
+2026-03-06 10:48:58,523 - __main__ - INFO - 
+[Step 4] Training risk detection model...
+2026-03-06 10:48:58,523 - ml.core.ml_models - INFO - Training RiskDetectionModel...
+2026-03-06 10:48:58,525 - ml.core.ml_models - INFO - Class distribution: {0: np.int64(31673), 1: np.int64(6345)}
+2026-03-06 10:48:58,610 - ml.core.ml_models - INFO - Using GradientBoostingClassifier...
+2026-03-06 10:54:50,905 - __main__ - INFO - ============================================================
+2026-03-06 10:54:50,906 - __main__ - INFO - SMARTCONTAINER RISK ENGINE - TRAINING PIPELINE
+2026-03-06 10:54:50,906 - __main__ - INFO - ============================================================
+2026-03-06 10:54:50,907 - __main__ - INFO - 
+[Step 1] Loading data...
+2026-03-06 10:54:51,142 - __main__ - INFO - Loaded 54000 records
+2026-03-06 10:54:51,143 - __main__ - INFO - 
+[Step 2] Data cleaning...
+2026-03-06 10:54:51,143 - ml.preprocessing.data_cleaner - INFO - Starting data cleaning pipeline...
+2026-03-06 10:54:51,186 - ml.preprocessing.data_cleaner - INFO - Removed 0 duplicate containers
+2026-03-06 10:54:51,200 - ml.preprocessing.data_cleaner - INFO - Dropped 0 rows with missing critical fields
+2026-03-06 10:54:51,302 - ml.preprocessing.data_cleaner - INFO - Removed 15982 rows with invalid value ranges
+2026-03-06 10:54:51,304 - ml.preprocessing.data_cleaner - INFO - Data cleaning complete. Final shape: (38018, 17)
+2026-03-06 10:54:51,304 - ml.preprocessing.data_cleaner - INFO - Cleaning statistics: {'duplicates_removed': 0, 'rows_with_missing_critical': 0, 'invalid_value_ranges': 15982}
+2026-03-06 10:54:51,307 - __main__ - INFO - After cleaning: 38018 records
+2026-03-06 10:54:51,307 - __main__ - INFO - Cleaning stats: {'duplicates_removed': 0, 'rows_with_missing_critical': 0, 'invalid_value_ranges': 15982}
+2026-03-06 10:54:51,307 - __main__ - INFO - 
+[Step 3] Feature engineering...
+2026-03-06 10:54:51,307 - ml.features.feature_engineer - INFO - Starting feature engineering pipeline...
+2026-03-06 10:54:52,535 - ml.features.feature_engineer - INFO - Feature engineering complete. Features created: 33
+2026-03-06 10:54:52,538 - __main__ - INFO - Engineered 33 features
+2026-03-06 10:54:52,560 - __main__ - INFO - Feature matrix shape: (38018, 33)
+2026-03-06 10:54:52,564 - __main__ - INFO - Target distribution:
+is_risky
+0    31673
+1     6345
+Name: count, dtype: int64
+2026-03-06 10:54:52,564 - __main__ - INFO - Risk score weights set: classifier=1.000 anomaly=0.000
+2026-03-06 10:54:52,564 - __main__ - INFO - 
+[Step 4] Training risk detection model...
+2026-03-06 10:54:52,564 - ml.core.ml_models - INFO - Training RiskDetectionModel...
+2026-03-06 10:54:52,566 - ml.core.ml_models - INFO - Class distribution: {0: np.int64(31673), 1: np.int64(6345)}
+2026-03-06 10:54:52,645 - ml.core.ml_models - INFO - Using GradientBoostingClassifier...
+2026-03-06 10:55:15,714 - ml.core.ml_models - INFO - Training complete. AUC: 0.9998
+2026-03-06 10:55:15,714 - ml.core.ml_models - INFO - Validation metrics: precision=0.9836 recall=0.9898 f1=0.9866
+2026-03-06 10:55:15,729 - ml.core.ml_models - INFO - Classification report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      6335
+           1       0.98      0.99      0.99      1269
+
+    accuracy                           1.00      7604
+   macro avg       0.99      0.99      0.99      7604
+weighted avg       1.00      1.00      1.00      7604
+
+2026-03-06 10:55:15,732 - __main__ - INFO - Training completed. Stats: {'auc': 0.9998187611447279, 'precision': 0.9835552075176194, 'recall': 0.9897557131599685, 'f1_score': 0.9866457187745483, 'confusion_matrix': [[6314, 21], [13, 1256]], 'train_size': 30414, 'test_size': 7604, 'n_features': 33, 'anomaly_n_jobs': 1}
+2026-03-06 10:55:15,732 - __main__ - INFO - 
+[Step 5] Saving model...
+2026-03-06 10:55:15,799 - ml.core.ml_models - INFO - Model saved to ./models/risk_model.joblib
+2026-03-06 10:55:15,800 - __main__ - INFO - Model saved to ./models/risk_model.joblib
+2026-03-06 10:55:15,800 - __main__ - INFO - 
+[Step 6] Generating sample predictions...
+2026-03-06 10:55:15,817 - ml.core.explainability - INFO - Generated explanations for 5 predictions
+2026-03-06 10:55:15,818 - __main__ - INFO - 
+Sample predictions:
+2026-03-06 10:55:15,819 - __main__ - INFO -   Container 97061800: Risk=Critical (Score=1.00) - All parameters within normal ranges. Risk score: 1.00. Stand...
+2026-03-06 10:55:15,820 - __main__ - INFO -   Container 77854751: Risk=Low (Score=0.00) - All parameters within normal ranges. Risk score: 0.00. Stand...
+2026-03-06 10:55:15,821 - __main__ - INFO -   Container 38459034: Risk=Low (Score=0.00) - Minor risk indicators noted: Measured weight is 20.6% higher...
+2026-03-06 10:55:15,822 - __main__ - INFO -   Container 69602841: Risk=Low (Score=0.00) - Minor risk indicators noted: Timing flags: submitted during ...
+2026-03-06 10:55:15,823 - __main__ - INFO -   Container 94070719: Risk=Low (Score=0.00) - All parameters within normal ranges. Risk score: 0.00. Stand...
+2026-03-06 10:55:15,824 - __main__ - INFO - 
+============================================================
+2026-03-06 10:55:15,824 - __main__ - INFO - TRAINING COMPLETE!
+2026-03-06 10:55:15,824 - __main__ - INFO - ============================================================
+2026-03-06 10:55:15,830 - __main__ - INFO - Training report saved to ./models/training_report.json
+2026-03-06 12:54:34,773 - __main__ - INFO - ============================================================
+2026-03-06 12:54:34,774 - __main__ - INFO - SMARTCONTAINER RISK ENGINE - TRAINING PIPELINE
+2026-03-06 12:54:34,775 - __main__ - INFO - ============================================================
+2026-03-06 12:54:34,775 - __main__ - INFO - 
+[Step 1] Loading data...
+2026-03-06 12:54:35,313 - __main__ - INFO - Loaded 54000 records
+2026-03-06 12:54:35,314 - __main__ - INFO - 
+[Step 2] Data cleaning...
+2026-03-06 12:54:35,314 - ml.preprocessing.data_cleaner - INFO - Starting data cleaning pipeline...
+2026-03-06 12:54:35,395 - ml.preprocessing.data_cleaner - INFO - Removed 0 duplicate containers
+2026-03-06 12:54:35,429 - ml.preprocessing.data_cleaner - INFO - Dropped 0 rows with missing critical fields
+2026-03-06 12:54:35,751 - ml.preprocessing.data_cleaner - INFO - Removed 15982 rows with invalid value ranges
+2026-03-06 12:54:35,761 - ml.preprocessing.data_cleaner - INFO - Data cleaning complete. Final shape: (38018, 17)
+2026-03-06 12:54:35,761 - ml.preprocessing.data_cleaner - INFO - Cleaning statistics: {'duplicates_removed': 0, 'rows_with_missing_critical': 0, 'invalid_value_ranges': 15982}
+2026-03-06 12:54:35,771 - __main__ - INFO - After cleaning: 38018 records
+2026-03-06 12:54:35,772 - __main__ - INFO - Cleaning stats: {'duplicates_removed': 0, 'rows_with_missing_critical': 0, 'invalid_value_ranges': 15982}
+2026-03-06 12:54:35,773 - __main__ - INFO - 
+[Step 3] Feature engineering...
+2026-03-06 12:54:35,773 - ml.features.feature_engineer - INFO - Starting feature engineering pipeline...
+2026-03-06 12:54:41,059 - ml.features.feature_engineer - INFO - Feature engineering complete. Features created: 32
+2026-03-06 12:54:41,065 - __main__ - INFO - Engineered 32 features
+2026-03-06 12:54:41,104 - __main__ - INFO - Feature matrix shape: (38018, 32)
+2026-03-06 12:54:41,111 - __main__ - INFO - Target distribution:
+is_risky
+0    31673
+1     6345
+Name: count, dtype: int64
+2026-03-06 12:54:41,111 - __main__ - INFO - Risk score weights set: classifier=1.000 anomaly=0.000
+2026-03-06 12:54:41,112 - __main__ - INFO - 
+[Step 4] Training risk detection model...
+2026-03-06 12:54:41,112 - ml.core.ml_models - INFO - Training RiskDetectionModel...
+2026-03-06 12:54:41,117 - ml.core.ml_models - INFO - Class distribution: {0: np.int64(31673), 1: np.int64(6345)}
+2026-03-06 12:54:41,333 - ml.core.ml_models - INFO - Using GradientBoostingClassifier...
+2026-03-06 12:55:44,757 - ml.core.ml_models - INFO - Training complete. AUC: 0.9998
+2026-03-06 12:55:44,757 - ml.core.ml_models - INFO - Validation metrics: precision=0.9828 recall=0.9905 f1=0.9867
+2026-03-06 12:55:44,764 - ml.core.ml_models - INFO - Classification report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      6335
+           1       0.98      0.99      0.99      1269
+
+    accuracy                           1.00      7604
+   macro avg       0.99      0.99      0.99      7604
+weighted avg       1.00      1.00      1.00      7604
+
+2026-03-06 12:55:44,766 - __main__ - INFO - Training completed. Stats: {'auc': 0.999821746547972, 'precision': 0.9827990617670055, 'recall': 0.9905437352245863, 'f1_score': 0.9866562009419152, 'confusion_matrix': [[6313, 22], [12, 1257]], 'train_size': 30414, 'test_size': 7604, 'n_features': 32, 'anomaly_n_jobs': 1}
+2026-03-06 12:55:44,766 - __main__ - INFO - 
+[Step 5] Saving model...
+2026-03-06 12:55:44,797 - ml.core.ml_models - INFO - Model saved to ./models/risk_model.joblib
+2026-03-06 12:55:44,797 - __main__ - INFO - Model saved to ./models/risk_model.joblib
+2026-03-06 12:55:44,797 - __main__ - INFO - 
+[Step 6] Generating sample predictions...
+2026-03-06 12:55:44,804 - ml.core.explainability - INFO - Generated explanations for 5 predictions
+2026-03-06 12:55:44,804 - __main__ - INFO - 
+Sample predictions:
+2026-03-06 12:55:44,804 - __main__ - INFO -   Container 97061800: Risk=Critical (Score=1.00) - All parameters within normal ranges. Risk score: 1.00. Stand...
+2026-03-06 12:55:44,805 - __main__ - INFO -   Container 77854751: Risk=Low (Score=0.00) - All parameters within normal ranges. Risk score: 0.00. Stand...
+2026-03-06 12:55:44,805 - __main__ - INFO -   Container 38459034: Risk=Low (Score=0.00) - Minor risk indicators noted: Measured weight is 20.6% higher...
+2026-03-06 12:55:44,805 - __main__ - INFO -   Container 69602841: Risk=Low (Score=0.00) - Minor risk indicators noted: Timing flags: submitted during ...
+2026-03-06 12:55:44,805 - __main__ - INFO -   Container 94070719: Risk=Low (Score=0.00) - All parameters within normal ranges. Risk score: 0.00. Stand...
+2026-03-06 12:55:44,805 - __main__ - INFO - 
+============================================================
+2026-03-06 12:55:44,805 - __main__ - INFO - TRAINING COMPLETE!
+2026-03-06 12:55:44,805 - __main__ - INFO - ============================================================
+2026-03-06 12:55:44,806 - __main__ - INFO - Training report saved to ./models/training_report_no_leakage.json

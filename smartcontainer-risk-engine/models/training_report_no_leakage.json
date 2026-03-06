@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-03-06T07:25:44.805542+00:00",
+  "data_path": "F:\\HackMined\\smartcontainer-risk-engine\\data\\historical_data_processed.csv",
+  "model_output_path": "F:\\HackMined\\smartcontainer-risk-engine\\models\\risk_model.joblib",
+  "label_column": "is_risky",
+  "rows_after_cleaning": 38018,
+  "feature_count": 32,
+  "risk_scorer_weights": {
+    "classifier_weight": 1.0,
+    "anomaly_weight": 0.0
+  },
+  "validation_metrics": {
+    "auc": 0.999821746547972,
+    "precision": 0.9827990617670055,
+    "recall": 0.9905437352245863,
+    "f1_score": 0.9866562009419152,
+    "confusion_matrix": [
+      [
+        6313,
+        22
+      ],
+      [
+        12,
+        1257
+      ]
+    ],
+    "train_size": 30414,
+    "test_size": 7604,
+    "n_features": 32,
+    "anomaly_n_jobs": 1
+  }
+}
